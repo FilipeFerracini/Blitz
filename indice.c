@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX 1000001
+
 typedef struct{
     char placa[8];
     int ano;
@@ -15,18 +17,18 @@ typedef struct{
     int rrn;
 }tpos;
 
-void troca(int *a, int *b){
-    int aux;
+void troca(tpos *a, tpos *b){
+    tpos aux;
     aux=*a;
     *a=*b;
     *b=aux;
 }
 
-int separa(int *v, int comeco, int fim){
-    int pivo=v[fim];
+int separa(tpos *v, int comeco, int fim){
+    tpos pivo=v[fim];
     int j=comeco,k;
     for(k=comeco;k<fim;k++){
-        if(v[k]<=pivo){
+        if(strcmp(v[k].placa,pivo.placa)<=0){
             troca(&v[k],&v[j]);
             j++;
         }
@@ -35,7 +37,7 @@ int separa(int *v, int comeco, int fim){
     return j;
 }
 
-void quicksort(int *v,int comeco, int fim){
+void quicksort(tpos *v,int comeco, int fim){
     int pivo;
     if(comeco<fim){
         pivo=separa(v,comeco,fim);
@@ -46,22 +48,25 @@ void quicksort(int *v,int comeco, int fim){
 
 int main(void){
     FILE * arq, *fout;
-    tpos vec[1000001];
+    tpos vec[MAX];
     ttipo car;
     int i;
     arq=fopen("base.bin","rb");
     fout=fopen("index.bin","wb");
 
-    for(i=0;i<=1000000;i++){
+    for(i=0;i<MAX;i++){
         fread(&car, sizeof(char),sizeof(ttipo),arq);
         strcpy(vec[i].placa,car.placa);
-        vec[i].rrn=i+1;}
-        
-    i--;
+        vec[i].rrn=i+1;
+    }
+
+    quicksort(vec,0,MAX-1);
+    
+    for(i=0;i<MAX;i++)
+        fwrite(&vec[i],sizeof(char), sizeof(tpos),fout);
+
     fclose(arq);
     fclose(fout);
-    printf("%d\n",i);
-    printf("%s %d\n",vec[0].placa,vec[0].rrn);
-    printf("%s %d\n",vec[i].placa,vec[i].rrn);
+
     return 0;
 }
