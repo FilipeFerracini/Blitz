@@ -55,6 +55,7 @@ int main(void){
     fout=fopen("index.bin","wb");
 
     for(i=0;i<MAX;i++){
+        fseek(arq,i*sizeof(ttipo),SEEK_SET);
         fread(&car, sizeof(char),sizeof(ttipo),arq);
         strcpy(vec[i].placa,car.placa);
         vec[i].rrn=i+1;
@@ -64,7 +65,7 @@ int main(void){
     
     for(i=0;i<MAX;i++)
         fwrite(&vec[i],sizeof(char), sizeof(tpos),fout);
-
+    
     fclose(arq);
     fclose(fout);
 
