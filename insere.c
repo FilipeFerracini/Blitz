@@ -131,7 +131,7 @@ int main (void){
     for(int i=0;i<MAX;i++)
         fread(&vec[i], sizeof(char),sizeof(tpos),index);
 
-    while((scanf("%c %s ",&input,placa))==2 && tam<100){
+    while((scanf("%c %s ",&input,placa))==2){
         ttipo car;
         int achou=-1;
         if(input=='r'){
@@ -151,6 +151,9 @@ int main (void){
                     printf("carro %s %d %s %s %s eh roubado!\n",car.placa,car.ano,car.marca,car.modelo,car.estado);
                 }
             }
+        }
+        if(tam>=100){
+            
         }
     }
     fclose(index);
