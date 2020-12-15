@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 1000001
-
 typedef struct{
     char placa[8];
     int ano;
@@ -35,19 +33,25 @@ int buscabinrec(tpos v[],char x[], int inf,int sup){
 
 int main(void){
     FILE *index, *base;
-    tpos vec[MAX];
+    tpos *vetor;
     char input,placa[8];
     ttipo car;
     index=fopen("index.bin","rb");
     base=fopen("base.bin","rb");
 
-    for(int i=0;i<MAX;i++)
-        fread(&vec[i], sizeof(char),sizeof(tpos),index);
+    fseek(index, 0, SEEK_END);
+    long lpos = ftell(index);
+    int n = lpos / sizeof(tpos);
+
+    vetor = (tpos *) malloc(n * sizeof(tpos));
+    fseek(index, 0, SEEK_SET);
+    for(int i=0;i<n;i++)
+        fread((vetor+i), sizeof(char),sizeof(tpos),index);
     
     while(scanf("%c %s ", &input, placa)==2){
         if(input=='c'){
             int pos=0;
-            pos=vec[buscabinrec(vec,placa,0,MAX-1)].rrn-1;
+            pos=(vetor+buscabinrec(vetor,placa,0,n-1))->rrn-1;
             if(pos==-1)
                 printf("carro %s nao consta na lista\n",placa);
             else{
@@ -59,6 +63,7 @@ int main(void){
     }
     fclose(index);
     fclose(base);
+    free(vetor);
 
     return 0;
 }
