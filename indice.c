@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 1000001
-
 typedef struct{
     char placa[8];
     int ano;
@@ -48,26 +46,32 @@ void quicksort(tpos *v,int comeco, int fim){
 
 int main(void){
     FILE * arq, *fout;
-    tpos vec[MAX];
+    tpos *vetor;
     ttipo car;
     int i;
     arq=fopen("base.bin","rb");
     fout=fopen("index.bin","wb");
+    
+    fseek(arq, 0, SEEK_END);
+    long lpos = ftell(arq);
+    int n = lpos / sizeof(ttipo);
 
-    for(i=0;i<MAX;i++){
+    vetor = (tpos *) malloc(n * sizeof(tpos));
+    for(i=0;i<n;i++){
         fseek(arq,i*sizeof(ttipo),SEEK_SET);
         fread(&car, sizeof(char),sizeof(ttipo),arq);
-        strcpy(vec[i].placa,car.placa);
-        vec[i].rrn=i+1;
+        strcpy((vetor+i)->placa,car.placa);
+        (vetor+i)->rrn=i+1;
     }
 
-    quicksort(vec,0,MAX-1);
+    quicksort(vetor,0,n-1);
     
-    for(i=0;i<MAX;i++)
-        fwrite(&vec[i],sizeof(char), sizeof(tpos),fout);
-    
+    for(i=0;i<n;i++)
+        fwrite((vetor+i),sizeof(char), sizeof(tpos),fout);
+
     fclose(arq);
     fclose(fout);
+    free(vetor);
 
     return 0;
 }
