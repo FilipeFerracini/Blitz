@@ -252,6 +252,7 @@ int main (void){
     
     fclose(index);
     fclose(base);
+    free(vetor);
     
     return 0;
 }

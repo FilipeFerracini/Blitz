@@ -22,25 +22,42 @@ void troca(tpos *a, tpos *b){
     *b=aux;
 }
 
-int separa(tpos *v, int comeco, int fim){
-    tpos pivo=v[fim];
-    int j=comeco,k;
-    for(k=comeco;k<fim;k++){
-        if(strcmp(v[k].placa,pivo.placa)<=0){
-            troca(&v[k],&v[j]);
+void intercala(tpos *v, int comeco, int meio, int fim){
+    tpos w[2*fim];
+    int i,j,k=0;
+    i=comeco;
+    j=meio;
+    while(i<meio && j<fim){
+        if(strcmp(v[i].placa,v[j].placa)<0){
+            w[k]=v[i];
+            i++;
+        }else{
+            w[k]=v[j];
             j++;
         }
+        k++;
     }
-    troca(&v[j],&v[fim]);
-    return j;
+    while(i<meio){
+        w[k]=v[i];
+        i++;
+        k++;
+    }
+    while(j<fim){
+        w[k]=v[j];
+        j++;
+        k++;
+    }
+    for(i=comeco;i<fim;i++)
+        v[i]=w[i-comeco];
 }
 
-void quicksort(tpos *v,int comeco, int fim){
-    int pivo;
-    if(comeco<fim){
-        pivo=separa(v,comeco,fim);
-        quicksort(v,comeco,pivo-1);
-        quicksort(v,pivo+1,fim);
+void mergesort( tpos *v, int comeco,int fim){
+    int meio;
+    if(comeco<fim-1){
+        meio=(comeco+fim)/2;
+        mergesort(v,comeco,meio);
+        mergesort(v,meio,fim);
+        intercala(v,comeco,meio,fim);
     }
 }
 
@@ -64,7 +81,7 @@ int main(void){
         (vetor+i)->rrn=i+1;
     }
 
-    quicksort(vetor,0,n-1);
+    mergesort(vetor,0,n);
     
     for(i=0;i<n;i++)
         fwrite((vetor+i),sizeof(char), sizeof(tpos),fout);
